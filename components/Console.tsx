@@ -398,13 +398,13 @@ export function Console() {
               undoing={undoing}
               onUndo={undoLast}
               onRetry={data.retry.history}
-              className="max-h-[520px] 2xl:sticky 2xl:top-6 2xl:col-start-3 2xl:row-start-1 2xl:max-h-[calc(100dvh-48px)]"
+              className="max-h-[520px] lg:max-h-[48dvh] 2xl:sticky 2xl:top-6 2xl:col-start-3 2xl:row-start-1 2xl:max-h-[calc(100dvh-48px)]"
             />
             <LearningQueue
               queue={data.queue}
               now={now}
               onRetry={data.retry.queue}
-              className="max-h-[440px] 2xl:sticky 2xl:top-6 2xl:col-start-1 2xl:row-start-1 2xl:max-h-[calc(100dvh-48px)]"
+              className="max-h-[440px] lg:max-h-[38dvh] 2xl:sticky 2xl:top-6 2xl:col-start-1 2xl:row-start-1 2xl:max-h-[calc(100dvh-48px)]"
             />
           </div>
         </div>

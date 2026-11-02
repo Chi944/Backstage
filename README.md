@@ -20,6 +20,16 @@ For “move table 4 to table 9”, the matcher returns `move_table` and the inte
 
 The demo backend runs entirely on the Supabase free plan, with no AI API keys. Supabase runs the embedding model inside the Edge Function. Claude is part of the operator’s teaching workflow, outside the live request path. The Next.js frontend deploys separately to Vercel. [Supabase embeddings](https://supabase.com/docs/guides/functions/ai-models) · [Free plan limits](https://supabase.com/pricing)
 
+## Running locally
+
+1. Node.js 22.9+ (24 LTS recommended).
+2. `cp .env.example .env.local` and set `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` (publishable key).
+3. `npm ci && npm run dev`, then open [localhost:3000](http://localhost:3000).
+
+Keyboard: `/` focuses the cue input, `Enter` calls the cue, `↑`/`↓` recall previous commands, `Esc` clears. Read-only cues run automatically; write cues wait for **Run cue**. Without env vars the console still loads and explains how to connect.
+
+Frontend layout: `components/Console.tsx` (page shell) · `CommandInput` · `MatchCard` · `ResultView` · `TimeMachine` · `LearningQueue` · `CueSheet` · `StatsBar` · `LearnedToast`; data + realtime in `lib/useBackstage.ts`, client singleton in `lib/supabase.ts`.
+
 ## Local setup
 
 1. Use Node.js 22.9+ or 24 LTS. In a new checkout, copy `.env.example` to `.env.local`.
