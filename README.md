@@ -31,7 +31,7 @@ No LLM in the request path, no paid API, and user text never becomes SQL.
 | | |
 |---|---|
 | **What** | A natural-language operations console for a live event's front desk |
-| **Built for** | A one-hour hackathon. Backend, console, deployment and verification were all delivered within it |
+| **Built for** | A one-hour hackathon |
 | **Live demo** | [backstage-chi-six.vercel.app](https://backstage-chi-six.vercel.app) |
 | **Matching** | Supabase's built-in `gte-small` embeddings + pgvector + pg_trgm, with no LLM or external AI API |
 | **Data** | Supabase Postgres (free plan) · project `xakzepavudmskiegpwqw` · Singapore region |
