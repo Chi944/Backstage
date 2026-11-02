@@ -129,20 +129,20 @@ Backstage takes the opposite approach. It understands loose English but can only
 
 ```mermaid
 flowchart LR
-    A[Staff types a cue] --> B[guess_guest<br/>whole-word pg_trgm]
-    B --> C[Mask the name<br/>as 'the guest']
-    C --> D[gte-small embedding]
-    D --> E{pgvector<br/>top 8 ≥ 0.83}
-    E -->|No match| Q[Learning queue]
-    E -->|Match| F[Fill parameters<br/>guest id · numbers]
-    F -->|Missing guest| N[Needs input]
-    F --> G[Console shows SQL]
-    G -->|Read| H[Run now]
-    G -->|Write| I[Wait for Run cue]
-    H --> J[(Pre-approved<br/>Postgres function)]
+    A["Staff types a cue"] --> B["guess_guest<br/>whole-word pg_trgm"]
+    B --> C["Mask the name<br/>as the guest"]
+    C --> D["gte-small embedding"]
+    D --> E{"pgvector<br/>top 8 above 0.83"}
+    E -->|"No match"| Q["Learning queue"]
+    E -->|"Match"| F["Fill parameters<br/>guest id and numbers"]
+    F -->|"Missing guest"| N["Needs input"]
+    F --> G["Console shows SQL"]
+    G -->|"Read"| H["Run now"]
+    G -->|"Write"| I["Wait for Run cue"]
+    H --> J[("Pre-approved<br/>Postgres function")]
     I --> J
-    J --> K[History trigger<br/>Time Machine]
-    Q -.->|Operator teaches| E
+    J --> K["History trigger<br/>Time Machine"]
+    Q -.->|"Operator teaches"| E
 ```
 
 ### Safety rules and where they're enforced
