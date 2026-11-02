@@ -87,6 +87,8 @@ from unnest(array[
 
 > ⚠️ **Ranking guard.** If the command answers a *ranking* question, its phrases **must** contain a ranking word: *most, least, fewest, highest, lowest, top, biggest, largest, smallest, busiest, emptiest, rank*. `match-command` refuses to match ranking questions to phrases that have none of these words.
 
+> ⚠️ **Guest commands** (`param_type = 'guest'`): write the phrases with **"the guest"** in place of a name, e.g. `'move the guest to the VIP lounge'`. `match-command` swaps the recognised name for "the guest" before embedding, so phrases with real names would match worse, and the name would outweigh the verb.
+
 The `INSERT` fires a Realtime event on `commands`, so open consoles can refresh their catalog right away.
 
 ## Step 3 — Embed the new phrases

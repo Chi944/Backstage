@@ -1,5 +1,6 @@
 -- Backstage seed: 40 guests + 9 commands x 6-7 example phrases.
 -- Embeddings are filled afterwards by the embed-commands Edge Function.
+-- Guest phrases say "the guest": match-command masks the recognised name the same way before embedding.
 
 -- ---------------------------------------------------------------- guests
 insert into public.guests (name, tier, table_no, checked_in_at)
@@ -85,20 +86,20 @@ phrases(rpc_name, example_phrase) as (values
   ('who_is_inside', 'who has checked in so far'),
   ('who_is_inside', 'show me the people in the venue'),
 
-  ('check_in_guest', 'check in Sarah Tan'),
-  ('check_in_guest', 'mark Ali as arrived'),
-  ('check_in_guest', 'Priya Ramasamy just arrived'),
-  ('check_in_guest', 'please check in Daniel de Souza'),
-  ('check_in_guest', 'sign in Rachel Teo'),
-  ('check_in_guest', 'Wong Kai Xuan is here'),
-  ('check_in_guest', 'register arrival for Emily Goh'),
+  ('check_in_guest', 'check in the guest'),
+  ('check_in_guest', 'mark the guest as arrived'),
+  ('check_in_guest', 'the guest just arrived'),
+  ('check_in_guest', 'please check in the guest'),
+  ('check_in_guest', 'sign in the guest'),
+  ('check_in_guest', 'the guest is here'),
+  ('check_in_guest', 'register arrival for the guest'),
 
-  ('check_out_guest', 'check out Sarah Tan'),
-  ('check_out_guest', 'Ali has left'),
-  ('check_out_guest', 'mark Priya as departed'),
-  ('check_out_guest', 'sign out Daniel de Souza'),
-  ('check_out_guest', 'Rachel Teo went home'),
-  ('check_out_guest', 'remove Emily Goh from the venue'),
+  ('check_out_guest', 'check out the guest'),
+  ('check_out_guest', 'the guest has left'),
+  ('check_out_guest', 'mark the guest as departed'),
+  ('check_out_guest', 'sign out the guest'),
+  ('check_out_guest', 'the guest went home'),
+  ('check_out_guest', 'remove the guest from the venue'),
 
   ('vip_inside_count', 'how many VIPs are here'),
   ('vip_inside_count', 'VIP count'),

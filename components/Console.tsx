@@ -80,7 +80,19 @@ export function Console() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [recall, setRecall] = useState<{ list: string[]; index: number | null }>({ list: [], index: null });
 
-  const catalog = data.catalog.data;
+  // Guest example phrases are stored as "check in the guest" (the matcher masks names the same way);
+  // show them with a real guest so suggestions are runnable: check-ins use someone not yet inside.
+  const guestList = data.guests.data;
+  const catalog = useMemo(() => {
+    const waiting = guestList.find((g) => g.name === "Sarah Tan" && !g.checked_in_at) ?? guestList.find((g) => !g.checked_in_at);
+    const inside = guestList.find((g) => g.checked_in_at);
+    return data.catalog.data.map((c) => {
+      const guest = c.rpc_name === "check_out_guest" ? inside : waiting;
+      return guest && c.example_phrase
+        ? { ...c, example_phrase: c.example_phrase.replace(/\bthe guest\b/i, guest.name) }
+        : c;
+    });
+  }, [data.catalog.data, guestList]);
   const learned = useMemo(() => learnedLiveNames(catalog, now), [catalog, now]);
 
   const suggestions = useMemo(() => {
@@ -413,7 +425,7 @@ export function Console() {
       <CueSheet
         open={sheetOpen}
         onClose={() => setSheetOpen(false)}
-        catalog={data.catalog}
+        catalog={{ ...data.catalog, data: catalog }}
         now={now}
         onRetry={data.retry.catalog}
         onTry={(phrase) => {

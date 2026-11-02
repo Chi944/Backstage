@@ -38,7 +38,10 @@ export const supabase = createClient<Database>(
 
 ```
 user text ──► supabase.functions.invoke("match-command", { body: { text } })
-                 │  gte-small embedding → pgvector nearest command → params extracted (no LLM)
+                 │  1. guess_guest: pg_trgm finds a guest named in the text (whole words only)
+                 │  2. that name → "the guest", then gte-small embedding
+                 │  3. pgvector: top 8 example phrases ≥ threshold, ranking guard applied
+                 │  4. first candidate whose params the text can fill (guest id, 1 or 2 numbers)
                  ▼
           { status: "matched", command.rpc_name, params }
                  │
@@ -102,7 +105,7 @@ Nothing scored above the threshold. The text has been logged to `unknown_request
 
 ### Debug (tuning only)
 `{ "text": "...", "debug": true }` returns the raw top 3 with no threshold and logs nothing:
-`{ "threshold": 0.83, "top": [{ "name", "example_phrase", "similarity" }] }`
+`{ "threshold": 0.83, "masked_text": "check out the guest", "guest": "Rachel Teo", "top": [{ "name", "example_phrase", "similarity" }] }`
 
 ## 5. Command result shape
 
@@ -139,23 +142,34 @@ const { data } = await supabase.from("command_catalog").select("*");
 
 **Final threshold: `0.83`** (the spec's default was 0.85). Override it without redeploying by setting the `MATCH_THRESHOLD` secret on the `match-command` function.
 
-Tuned on 32 phrasings with `gte-small`:
+Tuned on 32 phrasings with `gte-small`, then re-verified after name masking (below):
 
-| Phrase | Top match | Similarity | Result |
+| Phrase | Matched | Similarity | Result |
 |---|---|---|---|
 | check in sarah tan | Check in guest | **1.000** | ✅ guest = Sarah Tan |
+| check in sara tan *(typo)* | Check in guest | **0.941** | ✅ guest = Sarah Tan |
+| check out Rachel Teo | Check out guest | **1.000** | ✅ (was *check in* before masking) |
+| Hiroshi Tanaka has arrived | Check in guest | **0.984** | ✅ (0.838 before masking) |
+| mark Ali as arrived | Check in guest | **1.000** | ✅ first name → Ali Rahman |
 | move everyone at table 3 over to table 7 | Move table | **0.934** | ✅ 3 → 7 |
+| who is at table 9 | Guests at table | **0.904** | ✅ via parameter fallback |
+| show me everyone at table nine | Guests at table | **0.890** | ✅ number word → 9 |
 | who still hasn't shown up | Who hasn't arrived | **0.920** | ✅ |
-| undo the last thing | Undo last change | **0.923** | ✅ |
 | how many vips do we have inside | VIPs inside | **0.970** | ✅ |
-| Hiroshi Tanaka has arrived | Check in guest | **0.838** | ✅ (missed at 0.85) |
-| Rajesh is here | Check in guest | **0.845** | ✅ (missed at 0.85) |
-| the purple elephant sings jazz on tuesdays | Guests at table | 0.774 | ✅ unknown |
-| book a taxi to changi airport | Check in guest | 0.777 | ✅ unknown |
-| who's the speaker tonight | Who's inside | 0.829 | ✅ unknown (closest call) |
-| which table has the most VIPs | VIPs inside | 0.919 | ✅ unknown, via the ranking guard |
+| undo the last thing | Undo last change | **0.923** | ✅ |
+| check in Bartholomew *(not a guest)* | Check in guest | 0.879 | ✅ `needs_input` · Couldn't find that guest |
+| delete all guests | Check out guest | 0.911 | ✅ `needs_input`, nothing written |
+| the purple elephant sings jazz on tuesdays | — | 0.779 | ✅ unknown |
+| who's the speaker tonight | — | 0.829 | ✅ unknown (closest call) |
+| which table has the most VIPs | — | 0.919 | ✅ unknown, via the ranking guard |
 
-**Why 0.83:** correct matches started at 0.838 and nonsense topped out at 0.829. A few off-topic but related phrases still score above any usable threshold, e.g. *"delete all guests"* (0.879) and *"how much did the venue cost"* (0.858). All of these land on **read-only** commands, so the worst case is a harmless list. No write command matched a wrong phrase in testing.
+**Why 0.83:** correct matches start at 0.84 and nonsense tops out at 0.829. Some off-topic but related phrases still score above any usable threshold. *"how much did the venue cost"* (0.858) shows the who's-inside list, a harmless read. Guest commands can't misfire on them either: with no guest named in the text, they return `needs_input` instead of writing.
+
+**Name masking:** a guest's name otherwise dominates the embedding. *"check out Rachel Teo"* scored 0.945 against the check-in phrase *"sign in Rachel Teo"*, a wrong write. So `match-command` resolves the guest first, replaces their name with "the guest", and only then embeds. The guest example phrases are stored the same way ("check out the guest"), which means the verb decides the command. The console fills a real name back into the suggestion chips.
+
+**Whole-word guest matching:** `guess_guest` uses `strict_word_similarity`, so short name parts can't match inside ordinary words. Plain `word_similarity` let "Chen" ~ "check" (0.54) resolve *"check in Bartholomew"* to Chen Xiu Ling; now that scores 0.34, below the 0.45 cut-off. Each name part also counts on its own at ×0.9 ("Ali" → Ali Rahman). Ties go to the closer full name.
+
+**Parameter fallback:** the matcher looks at the top 8 phrases, not just the best one. If the best command needs more numbers than the text has, the next candidate whose parameters *can* be filled wins. *"who is at table 9"* is closest to *"move table 4 to table 9"* (0.911), but it has one number, so it resolves to *Guests at table*. A missing guest never falls through: that returns `needs_input`.
 
 **Ranking guard:** embeddings put *"which table has the most VIPs"* at 0.92 against *"how many VIPs are here"*. That's too close for any threshold. So if the text contains a ranking word (*most, least, fewest, highest, lowest, top, biggest, largest, smallest, busiest, emptiest, rank*), it can only match a command whose example phrase also contains one. Today no command does, so ranking questions go to `unknown`, which is exactly where teaching starts.
 
