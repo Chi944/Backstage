@@ -1,0 +1,8 @@
+# Supabase CLI config (used by `supabase functions deploy` / `supabase db push`).
+project_id = "xakzepavudmskiegpwqw"
+
+[functions.match-command]
+verify_jwt = false
+
+[functions.embed-commands]
+verify_jwt = false
