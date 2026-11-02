@@ -20,7 +20,7 @@ No LLM in the request path, no paid API, and user text never becomes SQL.
 
 <img src="docs/console.png" alt="The Backstage console in its dark stage theme: learning queue on the left, the plain-English cue box with suggestion chips in the centre, the Time Machine on the right, and live Inside / Expected / VIPs inside counts across the top" width="820">
 
-<sub>Production console captured 2 November 2026 (Singapore) against the live seeded event: 21 of 40 guests inside, 6 VIPs.</sub>
+<sub>Production console against the live seeded event: 21 of 40 guests inside, 6 VIPs.</sub>
 
 </div>
 
