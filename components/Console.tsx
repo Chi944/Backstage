@@ -17,6 +17,7 @@ import { StatsBar } from "./StatsBar";
 import { TimeMachine } from "./TimeMachine";
 
 const BASE_EXAMPLES = ["who hasn't arrived yet?", "check in Sarah Tan", "undo that"];
+const SUGGESTION_ORDER = ["not_checked_in", "check_in_guest", "vip_inside_count", "move_table", "guests_at_table", "undo_last"];
 
 type MatchState =
   | { phase: "idle" }
@@ -83,16 +84,17 @@ export function Console() {
   const learned = useMemo(() => learnedLiveNames(catalog, now), [catalog, now]);
 
   const suggestions = useMemo(() => {
-    const ordered = [...catalog].sort((a, b) => Number(learned.has(b.name)) - Number(learned.has(a.name)));
-    const seenTypes = new Map<string, number>();
+    const rank = (rpc: string) => {
+      const i = SUGGESTION_ORDER.indexOf(rpc);
+      return i === -1 ? SUGGESTION_ORDER.length : i;
+    };
+    const ordered = [...catalog].sort(
+      (a, b) => Number(learned.has(b.name)) - Number(learned.has(a.name)) || rank(a.rpc_name) - rank(b.rpc_name),
+    );
     const picks: string[] = [];
     for (const c of ordered) {
       const phrase = c.example_phrase || c.description;
-      if (!phrase || picks.includes(phrase)) continue;
-      const n = seenTypes.get(c.param_type) ?? 0;
-      if (n >= 2 && !learned.has(c.name)) continue;
-      seenTypes.set(c.param_type, n + 1);
-      picks.push(phrase);
+      if (phrase && !picks.includes(phrase)) picks.push(phrase);
       if (picks.length === 5) break;
     }
     return picks;
@@ -291,7 +293,7 @@ export function Console() {
 
         {/* ---------- Stage ---------- */}
         <div className="mt-8 grid flex-1 grid-cols-1 items-start gap-6 lg:mt-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-8 2xl:grid-cols-[320px_minmax(0,1fr)_360px]">
-          <section className="min-w-0 lg:col-start-1 lg:row-span-2 lg:row-start-1 2xl:col-start-2" aria-label="The cue">
+          <section className="min-w-0 lg:col-start-1 lg:row-start-1 2xl:col-start-2" aria-label="The cue">
             <div className="mx-auto max-w-[860px]">
               <p className="eyebrow">The cue · plain English in, SQL out</p>
               <h2 className="mb-7 mt-3 font-display text-[44px] leading-[0.95] tracking-[-0.02em] text-paper sm:mb-8 sm:text-[64px]">
@@ -388,21 +390,23 @@ export function Console() {
             </div>
           </section>
 
-          <TimeMachine
-            history={data.history}
-            now={now}
-            undoing={undoing}
-            onUndo={undoLast}
-            onRetry={data.retry.history}
-            className="max-h-[560px] lg:col-start-2 lg:row-start-1 2xl:col-start-3 2xl:row-span-2"
-          />
-
-          <LearningQueue
-            queue={data.queue}
-            now={now}
-            onRetry={data.retry.queue}
-            className="max-h-[480px] lg:col-start-2 lg:row-start-2 2xl:col-start-1 2xl:row-span-2 2xl:row-start-1"
-          />
+          {/* One sticky column on laptops; on very wide screens it dissolves so each panel takes its own wing. */}
+          <div className="flex flex-col gap-6 lg:sticky lg:top-6 lg:col-start-2 lg:row-start-1 lg:gap-8 2xl:contents">
+            <TimeMachine
+              history={data.history}
+              now={now}
+              undoing={undoing}
+              onUndo={undoLast}
+              onRetry={data.retry.history}
+              className="max-h-[520px] 2xl:sticky 2xl:top-6 2xl:col-start-3 2xl:row-start-1 2xl:max-h-[calc(100dvh-48px)]"
+            />
+            <LearningQueue
+              queue={data.queue}
+              now={now}
+              onRetry={data.retry.queue}
+              className="max-h-[440px] 2xl:sticky 2xl:top-6 2xl:col-start-1 2xl:row-start-1 2xl:max-h-[calc(100dvh-48px)]"
+            />
+          </div>
         </div>
       </div>
 

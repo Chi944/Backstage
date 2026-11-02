@@ -206,6 +206,16 @@ export function useBackstage() {
     };
   }, [supabase, loadGuests, loadQueue, loadHistory, loadCatalog, reloadHistorySoon, reloadCatalogSoon]);
 
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "development") return;
+    const w = window as unknown as { __backstageLearn?: (name: string, description: string) => void };
+    w.__backstageLearn = (name, description) =>
+      setLearned((prev) => [...prev, { key: `${name}-${Date.now()}`, name, description }]);
+    return () => {
+      delete w.__backstageLearn;
+    };
+  }, []);
+
   const dismissLearned = useCallback((key: string) => {
     setLearned((prev) => prev.filter((l) => l.key !== key));
   }, []);
