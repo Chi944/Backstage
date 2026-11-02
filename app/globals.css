@@ -65,6 +65,12 @@ body {
   }
 }
 
+/* The command bar draws its own amber focus state on the surrounding form. */
+input#cue-input:focus,
+input#cue-input:focus-visible {
+  outline: none;
+}
+
 /* Film grain: a fixed, very faint noise layer over everything. */
 .grain {
   pointer-events: none;

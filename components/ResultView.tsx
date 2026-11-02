@@ -101,6 +101,8 @@ export function ResultView({ state, result, error, now, onDismiss }: Props) {
 
   const rows = Array.isArray(result.rows) ? result.rows : [];
   const columns = columnsFor(rows);
+  const hasNameColumn = columns.some((c) => c.key === "name");
+  const hasTier = hasNameColumn && columns.some((c) => c.key === "tier");
   const shown = rows.slice(0, MAX_ROWS);
   const refused = result.ok === false;
   const isWrite = result.kind === "write" && !refused;
@@ -148,14 +150,16 @@ export function ResultView({ state, result, error, now, onDismiss }: Props) {
 
       {rows.length > 0 && columns.length > 0 && (
         <div className="scroll-quiet overflow-x-auto border-t border-line">
-          <table className="w-full min-w-[420px] border-collapse text-left text-[15px] sm:text-[16px]">
+          <table className="w-full border-collapse text-left text-[15px] sm:min-w-[420px] sm:text-[16px]">
             <thead>
               <tr className="border-b border-line">
                 {columns.map((c) => (
                   <th
                     key={c.key}
                     scope="col"
-                    className={`eyebrow px-4 py-3 font-normal first:pl-6 last:pr-6 sm:first:pl-8 sm:last:pr-8 ${c.key === "table_no" ? "text-right" : ""}`}
+                    className={`eyebrow px-3 py-3 font-normal first:pl-6 last:pr-6 sm:px-4 sm:first:pl-8 sm:last:pr-8 ${
+                      c.key === "table_no" ? "text-right" : ""
+                    } ${c.key === "tier" && hasNameColumn ? "hidden sm:table-cell" : ""}`}
                   >
                     {c.label}
                   </th>
@@ -174,11 +178,18 @@ export function ResultView({ state, result, error, now, onDismiss }: Props) {
                   {columns.map((c) => (
                     <td
                       key={c.key}
-                      className={`px-4 py-3 first:pl-6 last:pr-6 sm:first:pl-8 sm:last:pr-8 ${
+                      className={`px-3 py-3 first:pl-6 last:pr-6 sm:px-4 sm:first:pl-8 sm:last:pr-8 ${
                         c.key === "name" ? "font-medium text-paper" : "text-paper/85"
-                      } ${c.key === "table_no" ? "text-right" : ""}`}
+                      } ${c.key === "table_no" ? "text-right" : ""} ${c.key === "tier" && hasNameColumn ? "hidden sm:table-cell" : ""} ${
+                        c.key === "checked_in_at" ? "whitespace-nowrap" : ""
+                      }`}
                     >
                       <Cell k={c.key} v={row[c.key]} now={now} />
+                      {c.key === "name" && hasTier && String(row.tier) !== "general" && (
+                        <span className="ml-2 align-middle sm:hidden">
+                          <TierBadge tier={row.tier} />
+                        </span>
+                      )}
                     </td>
                   ))}
                 </motion.tr>

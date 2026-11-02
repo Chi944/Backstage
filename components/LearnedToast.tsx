@@ -117,7 +117,7 @@ export function LearnedToasts({ items, onDismiss }: { items: LearnedCue[]; onDis
           />
         )}
       </AnimatePresence>
-      <div className="pointer-events-none fixed inset-x-0 top-4 z-[70] flex justify-center px-4 sm:top-6">
+      <div className="pointer-events-none fixed inset-x-0 top-0 z-[70] flex justify-center overflow-hidden px-4 pb-28 pt-4 sm:pt-6">
         <div className="flex w-full max-w-[460px] flex-col gap-3">
           <AnimatePresence>
             {items.slice(-3).map((cue) => (

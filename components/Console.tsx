@@ -252,7 +252,7 @@ export function Console() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="mx-auto flex min-h-dvh w-full max-w-[1520px] flex-col px-5 pb-10 sm:px-8 lg:px-10">
+      <div className="mx-auto flex min-h-dvh w-full max-w-[1520px] flex-col overflow-x-clip px-5 pb-10 sm:px-8 lg:px-10">
         {/* ---------- Header ---------- */}
         <header className="flex flex-col gap-6 border-b border-line py-6 sm:py-7 lg:flex-row lg:items-end lg:justify-between">
           <div className="flex items-end justify-between gap-4">
