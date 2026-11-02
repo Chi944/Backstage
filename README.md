@@ -97,7 +97,7 @@ Threshold tuning, the full test matrix and every response shape are in **[BACKEN
 | Console | Next.js 16 (App Router, Turbopack) · React 19 · Tailwind CSS 4 · Framer Motion |
 | API | Supabase Edge Functions (Deno) · `Supabase.ai` `gte-small` embeddings |
 | Data | Postgres · pgvector (HNSW, cosine) · pg_trgm · Row Level Security · Realtime |
-| Hosting | Vercel (auto-deploys `main`) · Supabase Free plan |
+| Hosting | Vercel (auto-deploys `main`, Web Analytics) · Supabase Free plan |
 
 ## Run it locally
 
