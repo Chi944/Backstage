@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const geist = Geist({
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-dvh">
         {children}
         <div aria-hidden className="grain" />
+        <Analytics />
       </body>
     </html>
   );
