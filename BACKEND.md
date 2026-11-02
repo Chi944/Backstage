@@ -161,7 +161,7 @@ Tuned on 32 phrasings with `gte-small`:
 
 ## 8. Realtime
 
-`guests`, `unknown_requests` and `commands` are in the `supabase_realtime` publication; anon can `SELECT` all three.
+`guests`, `history`, `unknown_requests` and `commands` are in the `supabase_realtime` publication; anon can `SELECT` all four.
 ```ts
 supabase.channel("backstage")
   .on("postgres_changes", { event: "*", schema: "public", table: "guests" }, refreshBoard)
