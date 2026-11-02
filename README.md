@@ -31,7 +31,7 @@ No LLM in the request path, no paid API, and user text never becomes SQL.
 | | |
 |---|---|
 | **What** | A natural-language operations console for a live event's front desk |
-| **Built for** | A one-hour hackathon. Backend, console, deployment and verification were all delivered on 2 November 2026 |
+| **Built for** | A one-hour hackathon. Backend, console, deployment and verification were all delivered within it |
 | **Live demo** | [backstage-chi-six.vercel.app](https://backstage-chi-six.vercel.app) |
 | **Matching** | Supabase's built-in `gte-small` embeddings + pgvector + pg_trgm, with no LLM or external AI API |
 | **Data** | Supabase Postgres (free plan) · project `xakzepavudmskiegpwqw` · Singapore region |
@@ -101,7 +101,7 @@ Backstage takes the opposite approach. It understands loose English but can only
 <a id="honest-status"></a>
 ## 🚦 Honest status
 
-**2 November 2026, commit `beb6f40`.** Production at [backstage-chi-six.vercel.app](https://backstage-chi-six.vercel.app) builds from `main` and was verified as follows:
+**Commit `beb6f40`.** Production at [backstage-chi-six.vercel.app](https://backstage-chi-six.vercel.app) builds from `main` and was verified as follows:
 
 | Area | Verified result |
 |---|---|
