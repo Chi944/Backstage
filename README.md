@@ -61,7 +61,6 @@ No LLM in the request path, no paid API, and user text never becomes SQL.
 - [Project structure](#project-structure)
 - [Known limitations](#known-limitations)
 - [Roadmap](#roadmap)
-- [Credits](#credits)
 
 ---
 
@@ -300,14 +299,3 @@ Planned, not built:
 - **Staff accounts.** Supabase Auth with per-event access, replacing the shared anon demo.
 - **Multiple events.** Scope guests and history by event.
 - **Automated checks.** Matcher regression suite and a UI smoke test in CI, gating Vercel deploys.
-
----
-
-<a id="credits"></a>
-## 👥 Credits
-
-Built by [@Chi944](https://github.com/Chi944).
-
-Built with [Next.js](https://nextjs.org), [React](https://react.dev), [Supabase](https://supabase.com), [pgvector](https://github.com/pgvector/pgvector), [Tailwind CSS](https://tailwindcss.com), [Framer Motion](https://motion.dev) and [Vercel](https://vercel.com). The `gte-small` embedding model runs inside Supabase Edge Functions. Fonts: Geist, Instrument Serif and JetBrains Mono, loaded through `next/font`.
-
-AI coding tools (Claude Code, Codex and Cursor) were used during development. The status section above separates what was verified from what is planned.
